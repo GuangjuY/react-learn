@@ -27,7 +27,7 @@ export default function DataTable() {
             key: 'userId',
         },
         {
-            title: '标题',
+            title: '标题1',
             dataIndex: 'title',
             key: 'title',
         },
