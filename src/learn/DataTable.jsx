@@ -1,17 +1,15 @@
-import {Pagination, Spin, Table} from "antd";
+import {Pagination, Table} from "antd";
 import {useEffect, useState} from "react";
 import axios from "axios";
 
 export default function DataTable() {
 
     const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [total, setTotal] = useState(0);
 
     const fetchData = async (page, pageSize) => {
-        setLoading(true);
         try {
             const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
                 params: {
@@ -24,7 +22,6 @@ export default function DataTable() {
         } catch (error) {
             console.error('Failed to fetch data:', error);
         }
-        setLoading(false);
     };
 
     useEffect(() => {
@@ -58,17 +55,13 @@ export default function DataTable() {
 
     return (
         <div>
-            {loading ? (
-                <Spin/>
-            ) : (
-                <Table
-                    columns={columns}
-                    dataSource={data}
-                    pagination={false}
-                    rowKey="id"
-                    onChange={handleTableChange}
-                />
-            )}
+            <Table
+                columns={columns}
+                dataSource={data}
+                pagination={false}
+                rowKey="id"
+                onChange={handleTableChange}
+            />
             <Pagination
                 current={page}
                 pageSize={pageSize}

@@ -1,0 +1,21 @@
+.demo-logo-vertical{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sidebar-title {
+    display: inline-block;
+    margin: 0;
+    color: #fff;
+    font-weight: 600;
+    line-height: 50px;
+    font-size: 20px;
+    font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
+    vertical-align: middle;
+}
+
+.sidebar-logo {
+    width: 40px;
+    animation: sidebar-logo-spin infinite 10s linear;
+}
