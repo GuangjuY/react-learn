@@ -1,57 +1,84 @@
-import {Pagination, Table} from "antd";
+import {Pagination, Spin, Table} from "antd";
 import {useEffect, useState} from "react";
+import axios from "axios";
 
 export default function DataTable() {
 
-    const [dataSource, setDataSource] = useState([]);
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [total, setTotal] = useState(0);
+
+    const fetchData = async (page, pageSize) => {
+        setLoading(true);
+        try {
+            const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+                params: {
+                    _page: page,
+                    _limit: pageSize,
+                },
+            });
+            setData(response.data);
+            setTotal(parseInt(response.headers['x-total-count']));
+        } catch (error) {
+            console.error('Failed to fetch data:', error);
+        }
+        setLoading(false);
+    };
 
     useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch("https://jsonplaceholder.typicode.com/posts");
-            const data = await response.json();
-            setDataSource(data);
-        }
-        fetchData().then(r => console.log(r))
-    }, []);
+        fetchData(page, pageSize).then(r => console.log(r));
+    }, [page, pageSize]);
 
+
+    const handleTableChange = (pagination) => {
+        setPage(pagination.current);
+        setPageSize(pagination.pageSize);
+    };
 
     const columns = [
         {
-            title: 'id',
+            title: 'ID',
             dataIndex: 'id',
             key: 'id',
         },
         {
-            title: '用户id',
-            dataIndex: 'userId',
-            key: 'userId',
-        },
-        {
-            title: '标题1',
+            title: 'Title',
             dataIndex: 'title',
             key: 'title',
         },
         {
-            title: '内容',
+            title: 'Body',
             dataIndex: 'body',
             key: 'body',
         },
     ];
 
-    // 分页配置
-    const paginationConfig = {
-        current: 1, // 当前页码
-        pageSize: 15, // 每页显示的数据条数
-        total: dataSource.length, // 数据总数
-        onChange: (page, pageSize) => {
-            console.log('Page:', page, 'PageSize:', pageSize);
-            // 处理页码变化逻辑
-        },
-    };
 
     return (
-        <>
-            <Table dataSource={dataSource} columns={columns} bordered={true} pagination={paginationConfig}/>
-        </>
+        <div>
+            {loading ? (
+                <Spin/>
+            ) : (
+                <Table
+                    columns={columns}
+                    dataSource={data}
+                    pagination={false}
+                    rowKey="id"
+                    onChange={handleTableChange}
+                />
+            )}
+            <Pagination
+                current={page}
+                pageSize={pageSize}
+                total={total}
+                onChange={(page, pageSize) => {
+                    setPage(page);
+                    setPageSize(pageSize);
+                }}
+                style={{marginTop: 20, textAlign: 'center'}}
+            />
+        </div>
     )
 }
